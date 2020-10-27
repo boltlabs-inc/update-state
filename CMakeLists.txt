@@ -24,6 +24,30 @@ install(TARGETS token-utils DESTINATION lib)
 install(FILES tokens/tokens.h DESTINATION include/update-state)
 install(FILES tokens/test-e2e.h DESTINATION include/update-state)
 
+find_package(emp-ag2pc REQUIRED)
+include_directories(${EMP-AG2PC_INCLUDE_DIRS})
+
+install(FILES tokens/ag2pc/tokens.h DESTINATION include/update-state/ag2pc)
+install(FILES tokens/ag2pc/translation.h DESTINATION include/update-state/ag2pc)
+install(FILES tokens/ag2pc/test-e2e.h DESTINATION include/update-state/ag2pc)
+install(FILES tokens/ag2pc/sha256.h DESTINATION include/update-state/ag2pc)
+
+add_library(tokenm-utils SHARED tokens/ag2pc/tokens.cpp tokens/ag2pc/translation.cpp)
+add_library(test-e2e SHARED tokens/ag2pc/test-e2e.cpp tokens/ag2pc/translation.cpp)
+target_link_libraries(tokenm-utils ${EMP-OT_LIBRARIES})
+target_link_libraries(test-e2e ${EMP-OT_LIBRARIES})
+
+install(TARGETS tokenm-utils DESTINATION lib)
+install(TARGETS test-e2e DESTINATION lib)
+
+# Test cases
+macro (add_test_ag2pc _name)
+  add_executable(${_name} "test/${_name}.cpp")
+  target_link_libraries(${_name}
+          ${EMP-OT_LIBRARIES}
+          tokenm-utils)
+endmacro()
+
 macro (add_test _name)
   add_executable(${_name} "test/${_name}.cpp")
   target_link_libraries(${_name}
@@ -36,3 +60,5 @@ macro (add_test _name)
 endmacro()
 
 add_test(token-main)
+add_test_ag2pc(tokens-main)
+add_test_ag2pc(translation)
