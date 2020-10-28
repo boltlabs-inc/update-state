@@ -24,9 +24,6 @@ typedef void* (*IOCallback)(void* nc, int party);
 /* Returns a pointer to a NetIO ptr */
 void* get_netio_ptr(char *address, int port, int party);
 
-/* Returns a pointer to a UnixNetIO ptr */
-void* get_unixnetio_ptr(char *socket_path, int party);
-
 /* Returns a pointer to a GoNetIO ptr */
 void* get_gonetio_ptr(void *raw_stream_fd, int party);
 
