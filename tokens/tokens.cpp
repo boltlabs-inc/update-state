@@ -19,13 +19,6 @@ void* get_netio_ptr(char *address, int port, int party) {
     return static_cast<void *>(io_ptr);
 }
 
-/* Returns a pointer to a UnixNetIO ptr */
-void* get_unixnetio_ptr(char *socket_path, int party) {
-    bool is_server = (party == MERCH) ? true : false;
-    UnixNetIO *io_ptr = new UnixNetIO(socket_path, is_server);
-    return static_cast<void *>(io_ptr);
-}
-
 void* get_gonetio_ptr(void *raw_stream_fd, int party) {
     bool is_server = (party == MERCH) ? true : false;
     GoNetIO *io_ptr = new GoNetIO(raw_stream_fd, is_server);
@@ -158,7 +151,9 @@ void issue_tokens(
   Q qs_merch = distribute_Q(MERCH);
 
   Integer(1556, 0, MERCH); //Fix for different number of input wires between parties
-
+#if defined(DEBUG)
+    cout << "Distributed everything. Compare public inputs." << endl;
+#endif
   //Compare public inputs + constants to be the same between CUST and MERCH
   Bit error_signal(false);
   error_signal = error_signal | compare_public_input(epsilon_d, hmac_key_commitment_d, paytoken_mask_commitment_d, rlc_d, nonce_d, val_cpfp_d, bal_min_cust_d, bal_min_merch_d, self_delay_d, merch_escrow_pub_key_d, merch_dispute_key_d, merch_payout_pub_key_d, merch_publickey_hash_d,
@@ -166,7 +161,9 @@ void issue_tokens(
   error_signal = error_signal | constants_not_equal(constants, constants_merch);
   error_signal = error_signal | q_not_equal(qs, qs_merch);
   error_signal = error_signal | compare_k_H(k, H, k_merch, H_merch);
-
+#if defined(DEBUG)
+    cout << "Public inputs verified. Format self_delay." << endl;
+#endif
   Integer zero = constants.zero;
   zero.resize(16, false);
   error_signal = error_signal | (self_delay_d == zero);
@@ -192,7 +189,7 @@ void issue_tokens(
   }
 
 #if defined(DEBUG)
-  cout << "distributed everything. verifying token sig" << endl;
+  cout << "Self_delay formatted. verifying token sig" << endl;
 #endif
 // check old pay token
   error_signal = error_signal | verify_token_sig(hmac_key_commitment_d, hmac_commitment_randomness_d, hmac_key_d, old_state_d, old_paytoken_d, constants, k, H);
@@ -318,7 +315,6 @@ void build_masked_tokens_cust(IOCallback io_callback,
   struct EcdsaSig_l* ct_merch
 ) {
   // select the IO interface
-  UnixNetIO *io1 = nullptr;
   NetIO *io2 = nullptr;
   GoNetIO *io3 = nullptr;
   LndNetIO *io4 = nullptr;
@@ -329,10 +325,7 @@ void build_masked_tokens_cust(IOCallback io_callback,
           setup_semi_honest(io4, CUST);
       } else {
           auto *io_ptr = io_callback((void *) &conn, CUST);
-          if (conn_type == UNIXNETIO) {
-              io1 = static_cast<UnixNetIO *>(io_ptr);
-              setup_semi_honest(io1, CUST);
-          } else if (conn_type == NETIO) {
+          if (conn_type == NETIO) {
               io2 = static_cast<NetIO *>(io_ptr);
               setup_semi_honest(io2, CUST);
           } else if (conn_type == CUSTOM) {
@@ -399,13 +392,10 @@ issue_tokens(
   ct_escrow,
   ct_merch
   );
+  finalize_semi_honest();
 #if defined(DEBUG)
   cout << "customer finished!" << endl;
 #endif
-  if (io1 != nullptr) {
-      io1->flush();
-      delete io1;
-  }
   if (io2 != nullptr) {
       io2->flush();
       delete io2;
@@ -452,7 +442,6 @@ void build_masked_tokens_merch(IOCallback io_callback,
 ) {
 
   // TODO: switch to smart pointer
-  UnixNetIO *io1 = nullptr;
   NetIO *io2 = nullptr;
   GoNetIO *io3 = nullptr;
   LndNetIO *io4 = nullptr;
@@ -463,10 +452,7 @@ void build_masked_tokens_merch(IOCallback io_callback,
           setup_semi_honest(io4, MERCH);
       } else {
           auto *io_ptr = io_callback((void *) &conn, MERCH);
-          if (conn_type == UNIXNETIO) {
-              io1 = static_cast<UnixNetIO *>(io_ptr);
-              setup_semi_honest(io1, MERCH);
-          } else if (conn_type == NETIO) {
+          if (conn_type == NETIO) {
               io2 = static_cast<NetIO *>(io_ptr);
               setup_semi_honest(io2, MERCH);
           } else if (conn_type == CUSTOM) {
@@ -535,14 +521,11 @@ issue_tokens(
   &ct_escrow,
   &ct_merch
   );
+  finalize_semi_honest();
 
 #if defined(DEBUG)
   cout << "merchant finished!" << endl;
 #endif
-    if (io1 != nullptr) {
-        io1->flush();
-        delete io1;
-    }
     if (io2 != nullptr) {
         io2->flush();
         delete io2;

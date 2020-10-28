@@ -21,7 +21,7 @@ void test(int party, NetIO* io, string name, string check_output = "") {
     // read in the circuit from the location where it was generated
 	string file = circuit_file_location + name;
         cout << file << endl;
-	CircuitFile cf(file.c_str());
+	BristolFormat cf(file.c_str());
     //
     // initialize some timing stuff?
 	auto t1 = clock_start();

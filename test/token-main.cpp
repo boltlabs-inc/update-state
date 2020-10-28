@@ -14,11 +14,6 @@ void *io_callback(void *conn, int party) {
     if (c->conn_type == NETIO) {
         NetIO *io = new NetIO((party == MERCH) ? nullptr : "127.0.0.1", 12345);
         return io;
-    } else if (c->conn_type == UNIXNETIO) {
-        string socket_path = "tmpcon";
-        bool is_server = (party == MERCH) ? true : false;
-        UnixNetIO *io = new UnixNetIO(socket_path.c_str(), is_server);
-        return io;
     }
     return NULL;
 }

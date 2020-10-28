@@ -2,9 +2,7 @@
 #include "ecdsa.h"
 #include "sha256.h"
 
-const int size = 516;
-
-// parses a 1024 char array (of 0/1s) into a 2-block sha256 input 
+// parses a 1024 char array (of 0/1s) into a 2-block sha256 input
 // input: char [1024]
 // output: fills in uint [2][16]
 //  TODO make some test vectors, seriously

@@ -14,7 +14,7 @@ void test_ecdsa_e2e(EcdsaPartialSig_l psl, char *hashedmsg, uint32_t party, uint
 
 	string file = circuit_file_location + "ecdsa.circuit.txt";
     cout << file << endl;
-	CircuitFile cf(file.c_str());
+	BristolFormat cf(file.c_str());
     //
     // initialize some timing stuff?
 	auto t1 = clock_start();
@@ -93,7 +93,7 @@ void test_ecdsa_e2e(EcdsaPartialSig_l psl, char *hashedmsg, uint32_t party, uint
 		cout << "result: " << res << endl;
 		for (int i = 0; i < 8; ++i) {
             int start = i*32;
-            digest[i] = bool_to_int<uint32_t>(&out[start], 32);
+            digest[i] = bool_to_int<uint32_t>(&out[start]);
         }
 	}
 	delete[] in;

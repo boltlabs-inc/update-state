@@ -15,13 +15,6 @@ void* get_netio_ptr(char *address, int port, int party) {
   return static_cast<void *>(io_ptr);
 }
 
-/* Returns a pointer to a UnixNetIO ptr */
-void* get_unixnetio_ptr(char *socket_path, int party) {
-  bool is_server = (party == MERCH) ? true : false;
-  UnixNetIO *io_ptr = new UnixNetIO(socket_path, is_server);
-  return static_cast<void *>(io_ptr);
-}
-
 void* get_gonetio_ptr(void *raw_stream_fd, int party) {
   bool is_server = (party == MERCH) ? true : false;
   GoNetIO *io_ptr = new GoNetIO(raw_stream_fd, is_server);
@@ -30,12 +23,12 @@ void* get_gonetio_ptr(void *raw_stream_fd, int party) {
 
 void* load_circuit_file(const char *path) {
   cout << "Loading circuit file for AG2PC: " << string(path) << endl;
-  CircuitFile *cf_ptr = new CircuitFile(path);
+  BristolFormat *cf_ptr = new BristolFormat(path);
   return static_cast<void *>(cf_ptr);
 }
 
 const string circuit_file_location = macro_xstr(EMP_CIRCUIT_PATH);
-void run(int party, NetIO* io, CircuitFile* cf,
+void run(int party, NetIO* io, BristolFormat* cf,
 /* CUSTOMER INPUTS */
   State_l old_state_l,
   State_l new_state_l,
@@ -244,15 +237,12 @@ void build_masked_tokens_cust(IOCallback io_callback,
   struct EcdsaSig_l* ct_merch
 ) {
   // select the IO interface
-  UnixNetIO *io1 = nullptr;
   NetIO *io2 = nullptr;
   GoNetIO *io3 = nullptr;
   ConnType conn_type = conn.conn_type;
   if (io_callback != NULL) {
     auto *io_ptr = io_callback((void *) &conn, CUST);
-    if (conn_type == UNIXNETIO) {
-        io1 = static_cast<UnixNetIO *>(io_ptr);
-    } else if (conn_type == NETIO) {
+    if (conn_type == NETIO) {
         io2 = static_cast<NetIO *>(io_ptr);
         io2->set_nodelay();
     } else if (conn_type == CUSTOM) {
@@ -278,16 +268,16 @@ void build_masked_tokens_cust(IOCallback io_callback,
   CommitmentRandomness_l hmac_commitment_randomness_l;
   CommitmentRandomness_l paytoken_mask_commitment_randomness_l;
 
-  CircuitFile *cf_ptr = nullptr;
+  BristolFormat *cf_ptr = nullptr;
   if (circuit_file == NULL) {
     auto t0 = clock_start();
     string file = circuit_file_location + "tokens.circuit.txt";
     // load circuit and create new CircuitFile object
-    cf_ptr = static_cast<CircuitFile *>(load_circuit_file(file.c_str()));
+    cf_ptr = static_cast<BristolFormat *>(load_circuit_file(file.c_str()));
     cout << "load circuit time: " <<time_from(t0)<< " microseconds" << endl;
   } else {
     // cast into a CircuitFile object
-    cf_ptr = static_cast<CircuitFile *>(circuit_file);
+    cf_ptr = static_cast<BristolFormat *>(circuit_file);
   }
 
   // TODO: load circuit separately 
@@ -335,7 +325,6 @@ void build_masked_tokens_cust(IOCallback io_callback,
   cout << "customer finished!" << endl;
 #endif
 
-  if (io1 != nullptr) delete io1;
   if (io2 != nullptr) delete io2;
   if (io3 != nullptr) delete io3;
   if (cf_ptr != nullptr) delete cf_ptr;
@@ -373,15 +362,12 @@ void build_masked_tokens_merch(IOCallback io_callback,
 ) {
 
   // TODO: switch to smart pointer
-  UnixNetIO *io1 = nullptr;
   NetIO *io2 = nullptr;
   GoNetIO *io3 = nullptr;
   ConnType conn_type = conn.conn_type;
   if (io_callback != NULL) {
     auto *io_ptr = io_callback((void *) &conn, MERCH);
-    if (conn_type == UNIXNETIO) {
-        io1 = static_cast<UnixNetIO *>(io_ptr);
-    } else if (conn_type == NETIO) {
+    if (conn_type == NETIO) {
         io2 = static_cast<NetIO *>(io_ptr);
         io2->set_nodelay();
     } else if (conn_type == CUSTOM) {
@@ -408,16 +394,16 @@ void build_masked_tokens_merch(IOCallback io_callback,
   CommitmentRandomness_l revlock_commitment_randomness_l;
   PublicKeyHash_l cust_publickey_hash_l;
 
-  CircuitFile *cf_ptr = nullptr;
+  BristolFormat *cf_ptr = nullptr;
   if (circuit_file == NULL) {
     auto t0 = clock_start();
     string file = circuit_file_location + "tokens.circuit.txt";
     // load circuit and create new CircuitFile object
-    cf_ptr = static_cast<CircuitFile *>(load_circuit_file(file.c_str()));
+    cf_ptr = static_cast<BristolFormat *>(load_circuit_file(file.c_str()));
     cout << "load circuit time: " <<time_from(t0)<< " microseconds" << endl;
   } else {
     // cast into a CircuitFile object
-    cf_ptr = static_cast<CircuitFile *>(circuit_file);
+    cf_ptr = static_cast<BristolFormat *>(circuit_file);
   }
 
   run(MERCH, io2, cf_ptr,
@@ -464,7 +450,6 @@ void build_masked_tokens_merch(IOCallback io_callback,
   cout << "merchant finished!" << endl;
 #endif
 
-  if (io1 != nullptr) delete io1;
   if (io2 != nullptr) delete io2;
   if (io3 != nullptr) delete io3;
   if (cf_ptr != nullptr) delete cf_ptr;
