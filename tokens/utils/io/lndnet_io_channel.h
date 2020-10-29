@@ -2,7 +2,7 @@
 #define LND_NETWORK_IO_CHANNEL
 
 #include "emp-tool/io/io_channel.h"
-#include "emp-tool/io/net_callback.h"
+#include "net_callback.h"
 
 namespace emp {
 

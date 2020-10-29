@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #include <stdint.h>
-#include <emp-tool/io/net_callback.h>
+#include "utils/io/net_callback.h"
 #endif
 
 /*
