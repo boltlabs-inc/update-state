@@ -51,7 +51,7 @@ string get_ECDSA_params() {
 // if s > q/2, set s = q-s.
 Integer set_signature_sign(Integer signature, Q qs) {
   // q2 = ceil( q/2 ), where q is the secp256k1 point order
-  assert(signature.size() == size);
+  //assert(signature.size() == size);
 //  string q2str = "57896044618658097711785492504343953926418782139537452191302581570759080747169";
 //  Integer q2(size, q2str, PUBLIC);
 //  Integer q (size, get_ECDSA_params(), PUBLIC);
