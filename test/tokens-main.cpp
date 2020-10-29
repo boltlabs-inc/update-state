@@ -1,6 +1,10 @@
 #include <emp-tool/emp-tool.h>
 #include "emp-ag2pc/emp-ag2pc.h"
 #include "tokens/ag2pc/sha256.h"
+#include "tokens/utils/utils.h"
+#include "tokens/utils/io/gonet_io_channel.h"
+#include "tokens/utils/io/lndnet_io_channel.h"
+#include "tokens/utils/io/net_callback.h"
 using namespace std;
 using namespace emp;
 
@@ -38,8 +42,8 @@ inline const char* hex_char_to_bin(char c) {
     }
 }
 
-inline std::string hex_to_binary(std::string hex) {
-    std::string bin;
+inline string hex_to_binary(string hex) {
+    string bin;
     for(unsigned i = 0; i != hex.length(); ++i)
         bin += hex_char_to_bin(hex[i]);
     return bin;

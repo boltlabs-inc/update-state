@@ -1,5 +1,6 @@
 #pragma once
 #include "emp-sh2pc/emp-sh2pc.h"
+#include "utils/ext-integer.h"
 
 using namespace emp;
 

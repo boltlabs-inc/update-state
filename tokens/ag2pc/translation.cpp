@@ -2,6 +2,10 @@
 #include <emp-tool/emp-tool.h>
 #include <string.h>
 #include "sha256.h"
+#include "../utils/utils.h"
+#include "../utils/io/gonet_io_channel.h"
+#include "../utils/io/lndnet_io_channel.h"
+#include "../utils/io/net_callback.h"
 
 using namespace std;
 using namespace emp;

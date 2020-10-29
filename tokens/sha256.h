@@ -1,6 +1,7 @@
 #pragma once
 #include "emp-sh2pc/emp-sh2pc.h"
 #include "constants.h"
+#include "utils/utils.h"
 using namespace emp;
 
 #define MERCH ALICE
@@ -14,7 +15,7 @@ const int BITS = 32;
  * - assumes padding already exists
  */
 
-#define CH(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
+#define CH(x, y, z) (((x) & (y)) ^ (inv(x) & (z)))
 #define MAJ(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 #define SHR32(x, n) ((x) >> (n))
 

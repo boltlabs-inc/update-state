@@ -2,6 +2,11 @@
 #include "emp-sh2pc/emp-sh2pc.h"
 #include "tokens.h"
 #include "constants.h"
+#include "utils/utils.h"
+#include "utils/io/gonet_io_channel.h"
+#include "utils/io/lndnet_io_channel.h"
+#include "utils/io/net_callback.h"
+#include "utils/ext-integer.h"
 using namespace emp;
 
 #define MERCH ALICE

@@ -2,6 +2,10 @@
 #include "translation.h"
 #include <emp-tool/emp-tool.h>
 #include "emp-ag2pc/emp-ag2pc.h"
+#include "../utils/utils.h"
+#include "../utils/io/gonet_io_channel.h"
+#include "../utils/io/lndnet_io_channel.h"
+#include "../utils/io/net_callback.h"
 using namespace std;
 
 #define MERCH ALICE

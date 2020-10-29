@@ -337,10 +337,10 @@ void fillEcdsaPartialSig_l(EcdsaPartialSig_l *eps, string r, string k_inv) {
 EcdsaPartialSig_d distribute_EcdsaPartialSig(EcdsaPartialSig_l psl, const int party){
   EcdsaPartialSig_d to_return;
   string r(psl.r);
-  to_return.r = Integer(258, r, party);
+  to_return.r = ExtInteger(258, r, party);
   string kinv(psl.k_inv);
 
-  to_return.k_inv = Integer(516, kinv, party);
+  to_return.k_inv = ExtInteger(516, kinv, party);
   to_return.k_inv = to_return.k_inv;
 
   return to_return;

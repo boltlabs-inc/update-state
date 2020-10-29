@@ -1,5 +1,6 @@
 #include "test-e2e.h"
 #include "translation.h"
+#include "../utils/utils.h"
 #include <emp-tool/emp-tool.h>
 #include <emp-ag2pc/emp-ag2pc.h>
 

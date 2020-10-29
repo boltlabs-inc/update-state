@@ -159,9 +159,9 @@ Bit q_not_equal(const Q& lhs, const Q& rhs) {
 
 Q distribute_Q(const int party) {
   string q2str = "57896044618658097711785492504343953926418782139537452191302581570759080747169";
-  Integer q2(516, q2str, party);
+  ExtInteger q2(516, q2str, party);
   string qstr = "115792089237316195423570985008687907852837564279074904382605163141518161494337";
-  Integer q(258, qstr, party);
+  ExtInteger q(258, qstr, party);
   return Q{
       .q = q,
       .q2 = q2

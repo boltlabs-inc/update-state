@@ -3,6 +3,7 @@
 #include "tokens/sha256.h"
 #include "tokens/tokens.h"
 #include "tokens/constants.h"
+#include "tokens/utils/ext-integer.h"
 #include "emp-sh2pc/emp-sh2pc.h"
 
 using namespace std;
@@ -41,7 +42,7 @@ void test_circ() {
 void test_ecdsa_sign(EcdsaPartialSig_l psl, string hashedmsg) {
     Integer(2060, 0, CUST);
     EcdsaPartialSig_d psd = distribute_EcdsaPartialSig(psl);
-    Integer msg(256, hashedmsg, MERCH);
+    ExtInteger msg(256, hashedmsg, MERCH);
     Integer fullF(256, 4294967295 /* 0xffffffff */, MERCH);
     Q qs = distribute_Q(MERCH);
     Integer target[8];
