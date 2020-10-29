@@ -1,0 +1,49 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+      sudo: required
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+         - TYPE=Debug
+
+    - os: linux
+      dist: bionic
+      sudo: required
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+         - TYPE=Release
+
+    - os: osx
+      sudo: required
+      env: 
+        - TYPE=Release
+
+    - os: osx
+      sudo: required
+      env: 
+        - TYPE=Debug
+      
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - wget https://raw.githubusercontent.com/emp-toolkit/emp-readme/master/scripts/install.py
+  - python install.py -install -tool -ot -sh2pc
+  - cd emp-tool; cmake -DENABLE_FLOAT=On .; sudo make install; cd .. 
+
+script:
+  - cmake -DCMAKE_BUILD_TYPE=$TYPE -DENABLE_FLOAT=On . && make 
+  - ./bin/token-main 1 1 & ./bin/token-main 2 1
