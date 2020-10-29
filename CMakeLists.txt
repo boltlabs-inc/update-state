@@ -43,13 +43,15 @@ target_link_libraries(generate-circuit
 install(TARGETS generate-circuit DESTINATION bin)
 
 install(TARGETS token-utils DESTINATION lib)
-install(FILES tokens/tokens.h DESTINATION include/update-state)
-install(FILES tokens/test-e2e.h DESTINATION include/update-state)
-install(FILES tokens/utils/utils.h DESTINATION include/update-state/utils)
-install(FILES tokens/utils/ext-integer.h DESTINATION include/update-state/utils)
-install(FILES tokens/utils/io/gonet_io_channel.h DESTINATION include/update-state/utils/io)
-install(FILES tokens/utils/io/lndnet_io_channel.h DESTINATION include/update-state/utils/io)
-install(FILES tokens/utils/io/net_callback.h DESTINATION include/update-state/utils/io)
+set(TOKEN_HEADERS "tokens/tokens.h" "tokens/test-e2e.h" "tokens/ecdsa.h" "tokens/hmac.h" "tokens/sha256.h" "tokens/constants.h" "tokens/tokens-misc.h")
+install(FILES ${TOKEN_HEADERS} DESTINATION include/update-state)
+
+set(UTIL_HEADERS "tokens/utils/utils.h" "tokens/utils/utils.hpp" "tokens/utils/ext-integer.h" "tokens/utils/ext-integer.hpp")
+install(FILES ${UTIL_HEADERS} DESTINATION include/update-state/utils)
+
+set(IO_HEADERS "tokens/utils/io/gonet_io_channel.h" "tokens/utils/io/lndnet_io_channel.h" "tokens/utils/io/net_callback.h")
+install(FILES ${IO_HEADERS} DESTINATION include/update-state/utils/io)
+
 
 find_package(emp-ag2pc REQUIRED)
 include_directories(${EMP-AG2PC_INCLUDE_DIRS})
