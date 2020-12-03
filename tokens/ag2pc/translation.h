@@ -11,6 +11,7 @@ int translate_txid(Txid_l txid, bool *in, int pos);
 int translate_paytoken(PayToken_l paytoken, bool *in, int pos);
 int translate_bitcoinPubKey(BitcoinPublicKey_l pubkey, bool *in, int pos);
 int translate_commitmentRandomness(CommitmentRandomness_l com_rand, bool *in, int pos);
+int translate_randomness(Randomness_l rand, bool *in, int pos);
 int translate_hmacKey(HMACKey_l key, bool *in, int pos);
 int translate_mask(Mask_l mask, bool *in, int pos);
 int translate_hmacKeyCom(HMACKeyCommitment_l hmac_key_com, bool *in, int pos);

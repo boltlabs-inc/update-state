@@ -59,6 +59,7 @@ void issue_tokens(
   EcdsaPartialSig_l sig2,
   CommitmentRandomness_l hmac_commitment_randomness_l,
   CommitmentRandomness_l paytoken_mask_commitment_randomness_l,
+  Randomness_l verify_success,
 
 /* TODO: ECDSA Key info */
 /* PUBLIC INPUTS */
@@ -78,7 +79,8 @@ void issue_tokens(
 /* OUTPUTS */
   PayToken_l* pt_return,
   EcdsaSig_l* ct_escrow,
-  EcdsaSig_l* ct_merch
+  EcdsaSig_l* ct_merch,
+  Randomness_l* success
   ) {
 #if defined(DEBUG)
   cout << "issuing tokens" << endl;
@@ -126,6 +128,7 @@ void issue_tokens(
   CommitmentRandomness_d paytoken_mask_commitment_randomness_d = distribute_CommitmentRandomness(paytoken_mask_commitment_randomness_l, MERCH);
   EcdsaPartialSig_d epsd1 = distribute_EcdsaPartialSig(sig1);
   EcdsaPartialSig_d epsd2 = distribute_EcdsaPartialSig(sig2);
+  Randomness_d verify_success_d = distribute_Randomness(verify_success);
 
   //PUBLIC values
   Balance_d epsilon_d_merch = distribute_Balance(epsilon_l, MERCH); // IVE BEEN TREATING THIS LIKE A 32 BIT VALUE, BUT ITS 64
@@ -150,7 +153,7 @@ void issue_tokens(
 
   Q qs_merch = distribute_Q(MERCH);
 
-  Integer(1556, 0, MERCH); //Fix for different number of input wires between parties
+  Integer(1428, 0, MERCH); //Fix for different number of input wires between parties
 #if defined(DEBUG)
     cout << "Distributed everything. Compare public inputs." << endl;
 #endif
@@ -265,10 +268,14 @@ void issue_tokens(
   for(int i=0; i<8; i++) {
     signed_escrow_tx_parsed.sig[i] = handle_error_case(signed_escrow_tx_parsed.sig[i], error_signal);
   }
+  for(int i=0; i<4; i++) {
+      verify_success_d.randomness[i] = handle_error_case(verify_success_d.randomness[i], error_signal);
+  }
 
   localize_PayToken(pt_return, new_paytoken_d, CUST);
   localize_EcdsaSig(ct_escrow, signed_escrow_tx_parsed, CUST);
   localize_EcdsaSig(ct_merch, signed_merch_tx_parsed, CUST);
+  localize_Randomness(success, verify_success_d, CUST);
 }
 
 /* customer's token generation function
@@ -312,7 +319,8 @@ void build_masked_tokens_cust(IOCallback io_callback,
 
   struct PayToken_l* pt_return,
   struct EcdsaSig_l* ct_escrow,
-  struct EcdsaSig_l* ct_merch
+  struct EcdsaSig_l* ct_merch,
+  struct Randomness_l* success
 ) {
   // select the IO interface
   NetIO *io2 = nullptr;
@@ -352,6 +360,7 @@ void build_masked_tokens_cust(IOCallback io_callback,
 
   CommitmentRandomness_l hmac_commitment_randomness_l;
   CommitmentRandomness_l paytoken_mask_commitment_randomness_l;
+  Randomness_l verify_success_l;
 
 issue_tokens(
 /* CUSTOMER INPUTS */
@@ -372,6 +381,7 @@ issue_tokens(
   dummy_sig,
   hmac_commitment_randomness_l,
   paytoken_mask_commitment_randomness_l,
+  verify_success_l,
 /* TODO: ECDSA Key info */
 /* PUBLIC INPUTS */
   epsilon_l,
@@ -390,7 +400,8 @@ issue_tokens(
 /* OUTPUTS */
   pt_return,
   ct_escrow,
-  ct_merch
+  ct_merch,
+  success
   );
   finalize_semi_honest();
 #if defined(DEBUG)
@@ -438,7 +449,8 @@ void build_masked_tokens_merch(IOCallback io_callback,
   struct CommitmentRandomness_l hmac_commitment_randomness_l,
   struct CommitmentRandomness_l paytoken_mask_commitment_randomness_l,
   struct EcdsaPartialSig_l sig1,
-  struct EcdsaPartialSig_l sig2
+  struct EcdsaPartialSig_l sig2,
+  struct Randomness_l verify_success
 ) {
 
   // TODO: switch to smart pointer
@@ -478,6 +490,7 @@ void build_masked_tokens_merch(IOCallback io_callback,
   PayToken_l pt_return;
   EcdsaSig_l ct_escrow;
   EcdsaSig_l ct_merch;
+  Randomness_l success;
   CommitmentRandomness_l revlock_commitment_randomness_l;
   PublicKeyHash_l cust_publickey_hash_l;
 
@@ -501,6 +514,7 @@ issue_tokens(
   sig2,
   hmac_commitment_randomness_l,
   paytoken_mask_commitment_randomness_l,
+  verify_success,
 /* TODO: ECDSA Key info */
 /* PUBLIC INPUTS */
   epsilon_l,
@@ -519,7 +533,8 @@ issue_tokens(
 /* OUTPUTS */
   &pt_return,
   &ct_escrow,
-  &ct_merch
+  &ct_merch,
+  &success
   );
   finalize_semi_honest();
 

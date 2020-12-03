@@ -251,6 +251,23 @@ CommitmentRandomness_l localize_CommitmentRandomness(CommitmentRandomness_d rand
   return to_return;
 }
 
+Randomness_d distribute_Randomness(Randomness_l rand, const int party){
+    Randomness_d to_return;
+
+    to_return.randomness[0] = Integer(32, rand.randomness[0], party);
+    to_return.randomness[1] = Integer(32, rand.randomness[1], party);
+    to_return.randomness[2] = Integer(32, rand.randomness[2], party);
+    to_return.randomness[3] = Integer(32, rand.randomness[3], party);
+
+    return to_return;
+}
+
+void localize_Randomness(Randomness_l* target, Randomness_d rand, const int party) {
+    for(int i=0; i<4; i++) {
+        target->randomness[i] = rand.randomness[i].reveal<uint32_t>(party);
+    }
+}
+
 Balance_d distribute_Balance(Balance_l balance, const int party) {
   Balance_d to_return;
 

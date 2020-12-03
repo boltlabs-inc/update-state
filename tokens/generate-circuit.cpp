@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
 
     CommitmentRandomness_l hmac_commitment_randomness_l;
     CommitmentRandomness_l paytoken_mask_commitment_randomness_l;
+    Randomness_l verify_success;
 
     State_l old_state_l;
     State_l new_state_l;
@@ -24,6 +25,7 @@ int main(int argc, char** argv) {
     PayToken_l pt_return;
     EcdsaSig_l ct_escrow;
     EcdsaSig_l ct_merch;
+    Randomness_l success;
     CommitmentRandomness_l revlock_commitment_randomness_l;
     PublicKeyHash_l cust_publickey_hash_l;
 
@@ -60,6 +62,7 @@ int main(int argc, char** argv) {
                    dummy_sig,
                    hmac_commitment_randomness_l,
                    paytoken_mask_commitment_randomness_l,
+                   verify_success,
                  /* TODO: ECDSA Key info */
                  /* PUBLIC INPUTS */
                    epsilon_l,
@@ -78,7 +81,8 @@ int main(int argc, char** argv) {
                  /* OUTPUTS */
                    &pt_return,
                    &ct_escrow,
-                   &ct_merch);
+                   &ct_merch,
+                   &success);
     finalize_plain_prot();
     return 0;
 }

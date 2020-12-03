@@ -163,6 +163,10 @@ struct CommitmentRandomness_l {
   uint32_t randomness[4];
 };
 
+struct Randomness_l {
+    uint32_t randomness[4];
+};
+
 /* state type
  *
  * \param nonce         : unique identifier for the transaction?
@@ -254,7 +258,8 @@ void build_masked_tokens_cust(
 
   struct PayToken_l* pt_return,
   struct EcdsaSig_l* ct_escrow,
-  struct EcdsaSig_l* ct_merch
+  struct EcdsaSig_l* ct_merch,
+  struct Randomness_l* success
 );
 
 
@@ -324,7 +329,8 @@ void build_masked_tokens_merch(
   struct CommitmentRandomness_l hmac_commitment_randomness_l,
   struct CommitmentRandomness_l paytoken_mask_commitment_randomness_l,
   struct EcdsaPartialSig_l sig1,
-  struct EcdsaPartialSig_l sig2
+  struct EcdsaPartialSig_l sig2,
+  struct Randomness_l verify_success
 );
 
 #ifdef __cplusplus

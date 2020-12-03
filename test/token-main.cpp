@@ -130,6 +130,7 @@ int main(int argc, char** argv) {
 
         CommitmentRandomness_l hmac_commitment_randomness_l;
         CommitmentRandomness_l paytoken_mask_commitment_randomness_l;
+        Randomness_l verify_success;
 
         State_l old_state_l;
         State_l new_state_l;
@@ -140,6 +141,7 @@ int main(int argc, char** argv) {
         PayToken_l pt_return;
         EcdsaSig_l ct_escrow;
         EcdsaSig_l ct_merch;
+        Randomness_l success;
         CommitmentRandomness_l revlock_commitment_randomness_l;
         PublicKeyHash_l cust_publickey_hash_l;
 
@@ -176,6 +178,7 @@ int main(int argc, char** argv) {
                        dummy_sig,
                        hmac_commitment_randomness_l,
                        paytoken_mask_commitment_randomness_l,
+                       verify_success,
                      /* TODO: ECDSA Key info */
                      /* PUBLIC INPUTS */
                        epsilon_l,
@@ -194,7 +197,8 @@ int main(int argc, char** argv) {
                      /* OUTPUTS */
                        &pt_return,
                        &ct_escrow,
-                       &ct_merch);
+                       &ct_merch,
+                       &success);
         finalize_plain_prot();
 	    return 0;
     }
@@ -263,12 +267,13 @@ int main(int argc, char** argv) {
     struct Mask_l mask;
     CommitmentRandomness_l hmac_rand;
     CommitmentRandomness_l pay_token_rand;
+    Randomness_l verify_success;
 
 	build_masked_tokens_merch(io_callback, nc, NULL, NULL, NULL, cf_ptr,
 	  amt, rl, paymask_com, key_com, merch_escrow_pub_key_l,
       merch_dispute_key_l, merch_publickey_hash,
       merch_payout_pub_key_l, nonce_l, val_cpfp, bal_min_cust, bal_min_merch, self_delay,
-      hmac_key, mask, mask, mask, hmac_rand, pay_token_rand, sig, sig);
+      hmac_key, mask, mask, mask, hmac_rand, pay_token_rand, sig, sig, verify_success);
   } else {
     State_l w;
     Balance_l fee_cc;
@@ -279,6 +284,7 @@ int main(int argc, char** argv) {
     PayToken_l pt_return;
     EcdsaSig_l ct_escrow;
     EcdsaSig_l ct_merch;
+    Randomness_l success;
     PublicKeyHash_l cust_publickey_hash_l;
 
     build_masked_tokens_cust(io_callback, nc, NULL, NULL, NULL, cf_ptr,
@@ -286,7 +292,7 @@ int main(int argc, char** argv) {
           merch_dispute_key_l, merch_publickey_hash,
           merch_payout_pub_key_l, nonce_l, val_cpfp, bal_min_cust, bal_min_merch, self_delay,
 	  rl_rand, w, w, fee_cc, pt_old, cust_escrow_pub_key_l, cust_payout_pub_key_l, cust_publickey_hash_l,
-	  &pt_return, &ct_escrow, &ct_merch);
+	  &pt_return, &ct_escrow, &ct_merch, &success);
   }
 
   return 0;

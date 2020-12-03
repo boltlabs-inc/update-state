@@ -160,6 +160,12 @@ struct CommitmentRandomness_l {
   uint32_t randomness[4];
 };
 
+/* randomness used to verify success of 2PC on Merchant side
+ */
+struct Randomness_l {
+    uint32_t randomness[4];
+};
+
 /* state type
  *
  * \param nonce                 : unique identifier for the transaction?
@@ -220,6 +226,7 @@ struct State_l {
  * \param[out] pt_masked    : masked pay token 
  * \param[out] ct_escrow    : masked close token - spends from escrow transaction (ECDSA signature) 
  * \param[out] ct_merch     : masked close token - spends from merchant close transaction (ECDSA signature) 
+ * \param[out] success      : A random string that is opened to the customer if 2PC was successful
  *
  */
 void build_masked_tokens_cust(
@@ -255,7 +262,8 @@ void build_masked_tokens_cust(
 
   struct PayToken_l* pt_return,
   struct EcdsaSig_l* ct_escrow,
-  struct EcdsaSig_l* ct_merch
+  struct EcdsaSig_l* ct_merch,
+  struct Randomness_l* success
 );
 
 
@@ -291,6 +299,7 @@ void build_masked_tokens_cust(
  * \param[in] paytoken_mask : (private) Random mask for the pay token 
  * \param[in] sig1          : (private) A partial ECDSA signature for merchant close transaction
  * \param[in] sig2          : (private) A partial ECDSA signature escrow close transaction
+ * \param[in] verify_success: (private) A random string that is revealed to the customer when 2PC is successful
  *
  * Merchant does not receive output.
  *
@@ -324,7 +333,8 @@ void build_masked_tokens_merch(
   struct CommitmentRandomness_l hmac_commitment_randomness_l,
   struct CommitmentRandomness_l paytoken_mask_commitment_randomness_l,
   struct EcdsaPartialSig_l sig1,
-  struct EcdsaPartialSig_l sig2
+  struct EcdsaPartialSig_l sig2,
+  struct Randomness_l verify_success
 );
 
 
@@ -350,6 +360,7 @@ void issue_tokens(
   EcdsaPartialSig_l sig2,
   CommitmentRandomness_l hmac_commitment_randomness_l,
   CommitmentRandomness_l paytoken_mask_commitment_randomness_l,
+  Randomness_l verify_success,
 
 /* PUBLIC INPUTS */
   Balance_l epsilon_l,
@@ -368,7 +379,8 @@ void issue_tokens(
 /* OUTPUTS */
   PayToken_l* pt_return,
   EcdsaSig_l* ct_escrow,
-  EcdsaSig_l* ct_merch
+  EcdsaSig_l* ct_merch,
+  Randomness_l* success
   );
 
 #ifdef __cplusplus

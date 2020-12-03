@@ -65,6 +65,10 @@ int translate_commitmentRandomness(CommitmentRandomness_l com_rand, bool *in, in
     return translate_general(com_rand.randomness, 4, in, pos);
 }
 
+int translate_randomness(Randomness_l rand, bool *in, int pos) {
+    return translate_general(rand.randomness, 4, in, pos);
+}
+
 int translate_hmacKey(HMACKey_l key, bool *in, int pos) {
     return translate_general(key.key, 16, in, pos);
 }

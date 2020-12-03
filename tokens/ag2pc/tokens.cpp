@@ -51,6 +51,7 @@ void run(int party, NetIO* io, BristolFormat* cf,
   EcdsaPartialSig_l sig2,
   CommitmentRandomness_l hmac_commitment_randomness_l,
   CommitmentRandomness_l paytoken_mask_commitment_randomness_l,
+  Randomness_l verify_success,
 
 /* PUBLIC INPUTS */
   Balance_l epsilon_l,
@@ -69,7 +70,8 @@ void run(int party, NetIO* io, BristolFormat* cf,
 /* OUTPUTS */
   PayToken_l* pt_return,
   EcdsaSig_l* ct_escrow,
-  EcdsaSig_l* ct_merch) {
+  EcdsaSig_l* ct_merch,
+  Randomness_l* success) {
 
 #if defined(DEBUG)
   //
@@ -134,6 +136,7 @@ void run(int party, NetIO* io, BristolFormat* cf,
         pos = translate_commitmentRandomness(paytoken_mask_commitment_randomness_l, in, pos);
         pos = translate_ecdsaPartialSig(sig1, in, pos);
         pos = translate_ecdsaPartialSig(sig2, in, pos);
+        pos = translate_randomness(verify_success, in, pos);
 #if defined(DEBUG)
         cout << "Position merch: " << pos << endl;
 #endif        
@@ -193,6 +196,10 @@ void run(int party, NetIO* io, BristolFormat* cf,
             int start = i*32;
             ct_merch->sig[i-16] = bool_to32(&out[start]);
         }
+        for (int i = 24; i < 28; ++i) {
+            int start = i*32;
+            success->randomness[i-24] = bool_to32(&out[start]);
+        }
 	}
 	delete[] in;
 	delete[] out;
@@ -238,7 +245,8 @@ void build_masked_tokens_cust(IOCallback io_callback,
 
   struct PayToken_l* pt_return,
   struct EcdsaSig_l* ct_escrow,
-  struct EcdsaSig_l* ct_merch
+  struct EcdsaSig_l* ct_merch,
+  struct Randomness_l* success
 ) {
   // select the IO interface
   NetIO *io2 = nullptr;
@@ -271,6 +279,7 @@ void build_masked_tokens_cust(IOCallback io_callback,
 
   CommitmentRandomness_l hmac_commitment_randomness_l;
   CommitmentRandomness_l paytoken_mask_commitment_randomness_l;
+  Randomness_l verify_success;
 
   BristolFormat *cf_ptr = nullptr;
   if (circuit_file == NULL) {
@@ -304,6 +313,7 @@ void build_masked_tokens_cust(IOCallback io_callback,
   dummy_sig,
   hmac_commitment_randomness_l,
   paytoken_mask_commitment_randomness_l,
+  verify_success,
 /* TODO: ECDSA Key info */
 /* PUBLIC INPUTS */
   epsilon_l,
@@ -322,7 +332,8 @@ void build_masked_tokens_cust(IOCallback io_callback,
 /* OUTPUTS */
   pt_return,
   ct_escrow,
-  ct_merch
+  ct_merch,
+  success
   );
 
 #if defined(DEBUG)
@@ -362,7 +373,8 @@ void build_masked_tokens_merch(IOCallback io_callback,
   struct CommitmentRandomness_l hmac_commitment_randomness_l,
   struct CommitmentRandomness_l paytoken_mask_commitment_randomness_l,
   struct EcdsaPartialSig_l sig1,
-  struct EcdsaPartialSig_l sig2
+  struct EcdsaPartialSig_l sig2,
+  struct Randomness_l verify_success
 ) {
 
   // TODO: switch to smart pointer
@@ -395,6 +407,7 @@ void build_masked_tokens_merch(IOCallback io_callback,
   PayToken_l pt_return;
   EcdsaSig_l ct_escrow;
   EcdsaSig_l ct_merch;
+  Randomness_l success;
   CommitmentRandomness_l revlock_commitment_randomness_l;
   PublicKeyHash_l cust_publickey_hash_l;
 
@@ -429,6 +442,7 @@ void build_masked_tokens_merch(IOCallback io_callback,
   sig2,
   hmac_commitment_randomness_l,
   paytoken_mask_commitment_randomness_l,
+  verify_success,
 /* TODO: ECDSA Key info */
 /* PUBLIC INPUTS */
   epsilon_l,
@@ -447,7 +461,8 @@ void build_masked_tokens_merch(IOCallback io_callback,
 /* OUTPUTS */
   &pt_return,
   &ct_escrow,
-  &ct_merch
+  &ct_merch,
+  &success
   );
 
 #if defined(DEBUG)

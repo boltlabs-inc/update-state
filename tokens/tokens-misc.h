@@ -99,6 +99,10 @@ struct CommitmentRandomness_d {
   Integer randomness[4];
 };
 
+struct Randomness_d {
+    Integer randomness[4];
+};
+
 /* This is the second part of an ecdsa signature
  * In this case 256 bits
  */
@@ -209,6 +213,9 @@ Integer switch_endianness(Integer big_endian_int, Constants constants);
 CommitmentRandomness_d distribute_CommitmentRandomness(CommitmentRandomness_l rand, const int party);
 CommitmentRandomness_l localize_CommitmentRandomness(CommitmentRandomness_d rand, const int party);
 
+Randomness_d distribute_Randomness(Randomness_l rand, const int party=MERCH);
+void localize_Randomness(Randomness_l* target, Randomness_d rand, const int party=CUST);
+
 Integer combine_balance(Balance_d balance);
 Balance_d split_integer_to_balance(Integer integer, Integer mask);
 
@@ -239,43 +246,6 @@ void dump_hash(string label, Integer buffer[8]);
 void dump_bit(string label, Bit b);
 
 /***************************** THIS FROM MARCELLA BEFORE THE GREAT RE-TYPING ************************/
-
-/* TODO: Fix types for all of these */
-
-/* issue tokens
- * parent function; implements Protocol Pi_{ IssueTokens }
- * as described in bolt.pdf
- */
-void issue_tokens(
-/* CUSTOMER INPUTS */
-  State_l old_state_l,
-  State_l new_state_l,
-  PayToken_l old_paytoken_l,
-  BitcoinPublicKey_l cust_escrow_pub_key_l,
-  BitcoinPublicKey_l cust_payout_pub_key_l,
-/* MERCHANT INPUTS */
-  HMACKey_l hmac_key_l,
-  Mask_l paytoken_mask_l,
-  Mask_l merch_mask_l,
-  Mask_l escrow_mask_l,
-  EcdsaPartialSig_l sig1,
-  EcdsaPartialSig_l sig2,
-/* TODO: ECDSA Key info */
-/* PUBLIC INPUTS */
-  Balance_l epsilon_l,
-  HMACKeyCommitment_l hmac_key_commitment_l,
-  MaskCommitment_l paytoken_mask_commitment_l,
-  RevLockCommitment_l rlc_l,
-  Nonce_l nonce_l,
-  BitcoinPublicKey_l merch_escrow_pub_key_l,
-  BitcoinPublicKey_l merch_dispute_key_l, 
-  BitcoinPublicKey_l merch_payout_pub_key_l,
-  PublicKeyHash_l merch_publickey_hash_l,
-/* OUTPUTS */
-  PayToken_l* pt_return,
-  EcdsaSig_l* ct_escrow,
-  EcdsaSig_l* ct_merch
-  );
 
 /* SIGNATURE SCHEME
  * for the pay token. We haven't decided which one to use.
