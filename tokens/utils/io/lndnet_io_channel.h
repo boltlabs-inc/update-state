@@ -21,7 +21,7 @@ namespace emp {
         int buffer_ptr = 0;
         int recv_buffer_ptr = 0;
         int received_ptr = 0;
-        int buffer_cap = NETWORK_BUFFER_SIZE;
+        int buffer_cap = NETWORK_BUFFER_SIZE2;
         bool has_send = false;
         LndNetIO(void* peer_ptr, cb_send send, cb_receive recv, bool is_server, bool quiet = false) {
             this->is_server = is_server;
